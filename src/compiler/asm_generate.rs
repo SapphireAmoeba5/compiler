@@ -57,3 +57,43 @@ pub fn asm_dump(instr: &Instruction) -> String {
     call dump\n"
     )
 }
+
+pub fn asm_add(instr: &Instruction) -> String {
+    format!(
+        "    ;--add--
+    pop rax
+    pop rdx
+    add rax, rdx
+    push rax\n"
+    )
+}
+
+pub fn asm_sub(instr: &Instruction) -> String {
+    format!(
+        "    ;--sub--
+    pop rax
+    pop rdx
+    sub rdx, rax
+    push rbx\n"
+    )
+}
+
+pub fn asm_mul(instr: &Instruction) -> String {
+    format!(
+        "    ;--mul--
+    pop rax
+    pop rdx
+    mul rdx
+    push rax\n"
+    )
+}
+
+pub fn asm_div(instr: &Instruction) -> String {
+    format!(
+        "    ;--div--
+    pop rax
+    pop rdx
+    div rdx
+    push rax\n"
+    )
+}

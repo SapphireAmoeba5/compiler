@@ -13,7 +13,9 @@ use operation::*;
 
 fn main() {
     let tokens: Vec<Instruction> = vec![
-        Instruction::new(Operation::Push, Some("56".to_string())),
+        Instruction::new(Operation::Push, Some("150".to_string())),
+        Instruction::new(Operation::Push, Some("150".to_string())),
+        Instruction::new(Operation::Add, None),
         Instruction::new(Operation::Dump, None),
     ];
 

@@ -30,24 +30,39 @@ impl Compiler {
         initialize_asm(&mut assembly);
 
         for instr in tokens.iter() {
+            let asm: String;
             match instr.op {
                 Operation::Push => {
-                    let asm = asm_push(instr);
-                    assembly.push_str(&asm);
+                    asm = asm_push(instr);
                 }
                 Operation::Dump => {
-                    let asm = asm_dump(instr);
-                    assembly.push_str(&asm);
+                    asm = asm_dump(instr);
                 }
-                _ => {}
+                Operation::Add => {
+                    asm = asm_add(instr);
+                }
+                Operation::Sub => {
+                    asm = asm_sub(instr);
+                }
+                Operation::Mul => {
+                    asm = asm_mul(instr);
+                }
+                Operation::Div => {
+                    asm = asm_div(instr);
+                }
+                _ => {
+                    asm = String::new();
+                }
             }
+            assembly.push_str(&asm);
         }
 
         // Push code to return from program
         assembly.push_str(
-            "    mov rax, 60
-            mov rdi, 0
-            syscall",
+            "    ;--exit program--    
+    mov rax, 60
+    mov rdi, 0
+    syscall",
         );
 
         // Output generated assembly to file

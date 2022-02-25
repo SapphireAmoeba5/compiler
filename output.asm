@@ -33,11 +33,19 @@ dump:
     ret
 global _start
 _start:
-    ;--push 56--
-    push 56
+    ;--push 150--
+    push 150
+    ;--push 150--
+    push 150
+    ;--add--
+    pop rax
+    pop rdx
+    add rax, rdx
+    push rax
     ;--dump--
     pop rdi
     call dump
+    ;--exit program--    
     mov rax, 60
-            mov rdi, 0
-            syscall
+    mov rdi, 0
+    syscall
