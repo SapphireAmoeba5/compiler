@@ -32,14 +32,15 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
             "^" => tokens.push(Instruction::new(Operation::BitwiseXor, None)),
 
             "if" => {
+                block_id += 1;
                 tokens.push(Instruction::new(Operation::If, Some(block_id.to_string())));
                 block_stack.push(block_id);
-                block_id += 1;
             }
             "else" => {
                 let id = match block_stack.last() {
                     Some(t) => {
                         let ret = t.clone();
+                        block_id += 1;
                         replace(block_stack.last_mut().unwrap(), block_id);
                         ret
                     }
