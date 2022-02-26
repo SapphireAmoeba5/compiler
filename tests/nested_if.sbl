@@ -1,0 +1,65 @@
+1 if
+    4201 .
+    1 if
+        4202 .
+    else
+        69 .
+    end
+else 
+    69 .
+end
+
+0 if
+    69
+    1 if
+        69 .
+    else
+        69 .
+    end
+else 
+    4203 .
+end
+
+1 if
+    4204 .
+    0 if
+        69 .
+    else
+        4205 .
+    end
+else 
+    69 .
+end
+
+
+1 if
+    4206 .
+    1 if
+        4207 .
+        1 if
+            4208 .
+        else
+            69 .
+        end
+    else
+        69 .
+    end
+else 
+    69 .
+end
+
+1 if
+    4209 .
+    1 if
+        42010 .
+        0 if
+            69 .
+        else
+            42011 .
+        end
+    else
+        69 .
+    end
+else 
+    69 .
+end

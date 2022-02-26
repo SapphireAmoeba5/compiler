@@ -32,14 +32,20 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
             "^" => tokens.push(Instruction::new(Operation::BitwiseXor, None)),
 
             "if" => {
+                // Increment block_id to get a unique label name for each label
                 block_id += 1;
-                tokens.push(Instruction::new(Operation::If, Some(block_id.to_string())));
+                tokens.push(Instruction::new(
+                    Operation::If,
+                    Some(vec![block_id.to_string()]),
+                ));
                 block_stack.push(block_id);
             }
             "else" => {
                 let id = match block_stack.last() {
                     Some(t) => {
+                        // Clone the block_id
                         let ret = t.clone();
+                        // Increment block_id for label pointing to end of if-else block & replace the id at the top of the block_stack with it
                         block_id += 1;
                         replace(block_stack.last_mut().unwrap(), block_id);
                         ret
@@ -49,7 +55,11 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
                         return Err(());
                     }
                 };
-                tokens.push(Instruction::new(Operation::Else, Some(id.to_string())));
+                // Push the label pointing to the end of the block & the label name for label that points to the else code
+                tokens.push(Instruction::new(
+                    Operation::Else,
+                    Some(vec![block_id.to_string(), id.to_string()]),
+                ));
             }
             "end" => {
                 let id = match block_stack.pop() {
@@ -59,7 +69,7 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
                         return Err(());
                     }
                 };
-                tokens.push(Instruction::new(Operation::End, Some(id.to_string())));
+                tokens.push(Instruction::new(Operation::End, Some(vec![id.to_string()])));
             }
             _ => {
                 match instr.parse::<u64>() {
@@ -69,7 +79,10 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
                         return Err(());
                     }
                 }
-                tokens.push(Instruction::new(Operation::Push, Some(instr.to_string())));
+                tokens.push(Instruction::new(
+                    Operation::Push,
+                    Some(vec![instr.to_string()]),
+                ));
             }
         }
     }

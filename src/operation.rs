@@ -33,14 +33,14 @@ pub enum Operation {
 #[derive(Debug)]
 pub struct Instruction {
     pub op: Operation,
-    pub value: Option<String>,
+    pub values: Option<Vec<String>>,
 }
 
 impl Instruction {
-    pub fn new(op: Operation, value: Option<String>) -> Self {
+    pub fn new(op: Operation, values: Option<Vec<String>>) -> Self {
         Self {
             op: op,
-            value: value,
+            values: values,
         }
     }
 }

@@ -1,0 +1,18 @@
+10 10 = if 420 . else 69 . end
+10 11 = if 69 . else 420 . end
+
+10 10 > if 69 . else 420 . end
+11 10 > if 420 . else 69 . end
+9 10 > if 69 . else 420 . end
+
+10 10 >= if 420 . else 69 . end
+11 10 >= if 420 . else 69 . end
+9 10 >= if 69 . else 420 . end
+
+10 10 < if 69 . else 420 . end
+9 10 < if 420 . else 69 . end
+11 10 < if 69 . else 420 . end
+
+10 ! if 69 . else 420 . end
+0 ! if 420 . else 69 . end
+1 ! if 69 . else 420 . end
