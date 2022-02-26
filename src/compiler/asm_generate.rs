@@ -1,4 +1,5 @@
 use crate::operation::*;
+use crate::{debug_println, error_println, info_println, info_println_if};
 
 /// Places all the boiler plate code in the beginning of the assembly output
 pub fn initialize_asm(buf: &mut String) {
@@ -74,7 +75,7 @@ pub fn asm_sub(instr: &Instruction) -> String {
     pop rax
     pop rdx
     sub rdx, rax
-    push rbx\n"
+    push rdx\n"
     )
 }
 
@@ -91,9 +92,147 @@ pub fn asm_mul(instr: &Instruction) -> String {
 pub fn asm_div(instr: &Instruction) -> String {
     format!(
         "    ;--div--
+    pop rcx
+    pop rax
+    div rcx
+    push rax\n"
+    )
+}
+
+pub fn asm_mod(instr: &Instruction) -> String {
+    format!(
+        "    ;--mod--
+    pop rcx
+    pop rax
+    div rcx
+    push rdx\n"
+    )
+}
+
+pub fn asm_eq(instr: &Instruction) -> String {
+    format!(
+        "    ;--equals--
     pop rax
     pop rdx
-    div rdx
+    cmp rax, rdx
+    mov rax, 0
+    setz al
     push rax\n"
+    )
+}
+
+pub fn asm_greater_than(instr: &Instruction) -> String {
+    format!(
+        "    ;--greater than--
+    xor rcx, rcx
+    pop rax
+    pop rdx
+    cmp rdx, rax
+    seta cl
+    push rcx\n"
+    )
+}
+
+pub fn asm_greater_than_eq(instr: &Instruction) -> String {
+    format!(
+        "    ;--greater than or equal--
+    xor rcx, rcx
+    pop rax
+    pop rdx
+    cmp rdx, rax
+    setae cl
+    push rcx\n"
+    )
+}
+
+pub fn asm_less_than(instr: &Instruction) -> String {
+    format!(
+        "    ;--less than--
+    xor rcx, rcx
+    pop rax
+    pop rdx
+    cmp rdx, rax
+    setb cl
+    push rcx\n"
+    )
+}
+
+pub fn asm_less_than_eq(instr: &Instruction) -> String {
+    format!(
+        "    ;--less than or equal--
+    xor rcx, rcx
+    pop rax
+    pop rdx
+    cmp rdx, rax
+    setbe cl
+    push rcx\n"
+    )
+}
+
+pub fn asm_bitwise_not(instr: &Instruction) -> String {
+    format!(
+        "    ;--bitwise not--
+    pop rax
+    not rax
+    push rax\n"
+    )
+}
+
+pub fn asm_bitwise_and(instr: &Instruction) -> String {
+    format!(
+        "    ;--bitwise and--
+    pop rax
+    pop rdx
+    and rax, rdx
+    push rax\n"
+    )
+}
+
+pub fn asm_bitwise_or(instr: &Instruction) -> String {
+    format!(
+        "    ;--bitwise or--
+    pop rax
+    pop rdx
+    or rax, rdx
+    push rax\n"
+    )
+}
+
+pub fn asm_bitwise_xor(instr: &Instruction) -> String {
+    format!(
+        "    ;--bitwise xor--
+    pop rax
+    pop rdx
+    xor rax, rdx
+    push rax\n"
+    )
+}
+
+pub fn asm_not(instr: &Instruction) -> String {
+    format!(
+        "    ;--not--
+    xor rcx, rcx
+    pop rax
+    test rax, rax
+    setz cl
+    push rcx\n"
+    )
+}
+
+pub fn asm_if(instr: &Instruction) -> String {
+    format!(
+        ";--if--
+    pop rax
+    test rax, rax
+    jz jump_addr_{}\n",
+        instr.value.clone().unwrap()
+    )
+}
+
+pub fn asm_end(instr: &Instruction) -> String {
+    format!(
+        ";--end--
+jump_addr_{}:\n",
+        instr.value.clone().unwrap()
     )
 }

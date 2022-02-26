@@ -13,4 +13,4 @@ if [ $? -ne 0 ]; then
 fi
 
 rm output.o
-echo -e "\033[32mBuld successful\033[0m"
+echo -e "\033[32mBuild successful\033[0m"

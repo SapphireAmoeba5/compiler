@@ -33,15 +33,59 @@ dump:
     ret
 global _start
 _start:
-    ;--push 150--
-    push 150
-    ;--push 150--
-    push 150
+    ;--push 10--
+    push 10
+    ;--push 10--
+    push 10
+    ;--equals--
+    pop rax
+    pop rdx
+    cmp rax, rdx
+    mov rax, 0
+    setz al
+    push rax
+;--if--
+    pop rax
+    test rax, rax
+    jz jump_addr_0
+    ;--push 420--
+    push 420
+    ;--dump--
+    pop rdi
+    call dump
+    ;--push 100--
+    push 100
+    ;--push 100--
+    push 100
     ;--add--
     pop rax
     pop rdx
     add rax, rdx
     push rax
+    ;--dump--
+    pop rdi
+    call dump
+    ;--push 200--
+    push 200
+    ;--push 200--
+    push 200
+    ;--add--
+    pop rax
+    pop rdx
+    add rax, rdx
+    push rax
+    ;--dump--
+    pop rdi
+    call dump
+;--end--
+jump_addr_0:
+    ;--push 1000--
+    push 1000
+    ;--dump--
+    pop rdi
+    call dump
+    ;--push 69--
+    push 69
     ;--dump--
     pop rdi
     call dump
