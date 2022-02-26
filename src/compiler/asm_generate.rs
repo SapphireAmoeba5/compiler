@@ -221,7 +221,7 @@ pub fn asm_not(instr: &Instruction) -> String {
 
 pub fn asm_if(instr: &Instruction) -> String {
     format!(
-        ";--if--
+        "    ;--if--
     pop rax
     test rax, rax
     jz jump_addr_{}\n",
@@ -229,9 +229,19 @@ pub fn asm_if(instr: &Instruction) -> String {
     )
 }
 
+pub fn asm_else(instr: &Instruction) -> String {
+    format!(
+        "    ;--else--
+    jmp jump_addr_{}
+jump_addr_{}:",
+        instr.value.clone().unwrap().parse::<u64>().unwrap() + 1,
+        instr.value.clone().unwrap()
+    )
+}
+
 pub fn asm_end(instr: &Instruction) -> String {
     format!(
-        ";--end--
+        "    ;--end--
 jump_addr_{}:\n",
         instr.value.clone().unwrap()
     )

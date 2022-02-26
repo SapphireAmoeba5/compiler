@@ -20,13 +20,6 @@ struct Arguments {
 }
 
 fn main() {
-    let tokens: Vec<Instruction> = vec![
-        Instruction::new(Operation::Push, Some("50".to_string())),
-        Instruction::new(Operation::Push, Some("100".to_string())),
-        // Instruction::new(Operation::GreaterThanEqual, None),
-        Instruction::new(Operation::Dump, None),
-    ];
-
     let args = Arguments::parse();
 
     let s = Compiler::new(&args.input_file, &args.output_file);

@@ -26,6 +26,7 @@ pub enum Operation {
 
     // Control flow
     If,
+    Else,
     End,
 }
 

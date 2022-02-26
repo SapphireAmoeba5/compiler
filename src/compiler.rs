@@ -115,6 +115,9 @@ impl Compiler {
                 Operation::If => {
                     asm = asm_if(instr);
                 }
+                Operation::Else => {
+                    asm = asm_else(instr);
+                }
                 Operation::End => {
                     asm = asm_end(instr);
                 }

@@ -1,11 +1,13 @@
 use crate::{error_println, operation::*};
 
+use std::mem::replace;
+
 pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
     let source: Vec<&str> = source.split_ascii_whitespace().collect();
     let mut tokens: Vec<Instruction> = Vec::new();
 
-    let mut label_id: usize = 0;
-    let mut if_stack: Vec<usize> = Vec::new();
+    let mut block_id: usize = 0;
+    let mut block_stack: Vec<usize> = Vec::new();
 
     for instr in source.iter() {
         match *instr {
@@ -30,12 +32,26 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
             "^" => tokens.push(Instruction::new(Operation::BitwiseXor, None)),
 
             "if" => {
-                tokens.push(Instruction::new(Operation::If, Some(label_id.to_string())));
-                if_stack.push(label_id);
-                label_id += 1;
+                tokens.push(Instruction::new(Operation::If, Some(block_id.to_string())));
+                block_stack.push(block_id);
+                block_id += 1;
+            }
+            "else" => {
+                let id = match block_stack.last() {
+                    Some(t) => {
+                        let ret = t.clone();
+                        replace(block_stack.last_mut().unwrap(), block_id);
+                        ret
+                    }
+                    None => {
+                        error_println!("Homeless 'else'");
+                        return Err(());
+                    }
+                };
+                tokens.push(Instruction::new(Operation::Else, Some(id.to_string())));
             }
             "end" => {
-                let id = match if_stack.pop() {
+                let id = match block_stack.pop() {
                     Some(t) => t,
                     None => {
                         error_println!("Homeless 'end'");
@@ -56,5 +72,11 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
             }
         }
     }
+
+    if !block_stack.is_empty() {
+        error_println!("Block missing matching end statement");
+        return Err(());
+    }
+
     Ok(tokens)
 }

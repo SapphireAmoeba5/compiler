@@ -44,7 +44,7 @@ _start:
     mov rax, 0
     setz al
     push rax
-;--if--
+    ;--if--
     pop rax
     test rax, rax
     jz jump_addr_0
@@ -53,42 +53,44 @@ _start:
     ;--dump--
     pop rdi
     call dump
-    ;--push 100--
-    push 100
-    ;--push 100--
-    push 100
-    ;--add--
-    pop rax
-    pop rdx
-    add rax, rdx
-    push rax
-    ;--dump--
-    pop rdi
-    call dump
-    ;--push 200--
-    push 200
-    ;--push 200--
-    push 200
-    ;--add--
-    pop rax
-    pop rdx
-    add rax, rdx
-    push rax
-    ;--dump--
-    pop rdi
-    call dump
-;--end--
-jump_addr_0:
-    ;--push 1000--
-    push 1000
-    ;--dump--
-    pop rdi
-    call dump
-    ;--push 69--
+    ;--else--
+    jmp jump_addr_1
+jump_addr_0:    ;--push 69--
     push 69
     ;--dump--
     pop rdi
     call dump
+    ;--end--
+jump_addr_1:
+    ;--push 10--
+    push 10
+    ;--push 11--
+    push 11
+    ;--equals--
+    pop rax
+    pop rdx
+    cmp rax, rdx
+    mov rax, 0
+    setz al
+    push rax
+    ;--if--
+    pop rax
+    test rax, rax
+    jz jump_addr_1
+    ;--push 420--
+    push 420
+    ;--dump--
+    pop rdi
+    call dump
+    ;--else--
+    jmp jump_addr_2
+jump_addr_1:    ;--push 60--
+    push 60
+    ;--dump--
+    pop rdi
+    call dump
+    ;--end--
+jump_addr_2:
     ;--exit program--    
     mov rax, 60
     mov rdi, 0
