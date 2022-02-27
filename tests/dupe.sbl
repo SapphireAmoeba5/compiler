@@ -1,0 +1,14 @@
+100 dup + 200 = if 1 . else 0 . end
+200 dup + 400 = if 2 . else 0 . end
+
+100 dup - 0 = if 3 . else 0 . end
+39858 dup - 0 = if 4 . else 0 . end
+
+500 dup * 250000 = if 5 . else 0 . end
+2 dup * 4 = if 6 . else 0 . end
+
+5 dup / 1 = if 7 . else 0 . end
+184874363 dup / 1 if 8 . else 0 . end
+
+92943838 dup % 0 = if 9 . else 0 . end
+123456 dup % 0 = if 10 . else 0 . end

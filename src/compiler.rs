@@ -67,6 +67,21 @@ impl Compiler {
                 Operation::Dump => {
                     asm = asm_dump(instr);
                 }
+                Operation::Dupe => {
+                    asm = asm_dupe(instr);
+                }
+                Operation::Pop => {
+                    asm = asm_pop(instr);
+                }
+                Operation::Swap => {
+                    asm = asm_swap(instr);
+                }
+                Operation::Over => {
+                    asm = asm_over(instr);
+                }
+                Operation::Rot => {
+                    asm = asm_rot(instr);
+                }
                 Operation::Add => {
                     asm = asm_add(instr);
                 }
@@ -114,6 +129,12 @@ impl Compiler {
                 }
                 Operation::If => {
                     asm = asm_if(instr);
+                }
+                Operation::While => {
+                    asm = asm_while(instr);
+                }
+                Operation::Do => {
+                    asm = asm_do(instr);
                 }
                 Operation::Else => {
                     asm = asm_else(instr);

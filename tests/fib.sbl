@@ -1,0 +1,9 @@
+0 1 93
+while dup 0 > do 
+    rot rot
+    dup .
+    dup rot +
+    
+    rot
+    1 -
+end

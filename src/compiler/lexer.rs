@@ -2,12 +2,20 @@ use crate::{error_println, operation::*};
 
 use std::mem::replace;
 
+struct Token {
+    token: String,
+    line_number: usize,
+    column: usize,
+}
+
 pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
+    // TODO: Create own split function that stores the line and column each token occured on
     let source: Vec<&str> = source.split_ascii_whitespace().collect();
+
     let mut tokens: Vec<Instruction> = Vec::new();
 
     let mut block_id: usize = 0;
-    let mut block_stack: Vec<usize> = Vec::new();
+    let mut block_stack: Vec<(usize, Operation)> = Vec::new();
 
     for instr in source.iter() {
         match *instr {
@@ -31,6 +39,11 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
             "|" => tokens.push(Instruction::new(Operation::BitwiseOr, None)),
             "^" => tokens.push(Instruction::new(Operation::BitwiseXor, None)),
 
+            "dup" => tokens.push(Instruction::new(Operation::Dupe, None)),
+            "pop" => tokens.push(Instruction::new(Operation::Pop, None)),
+            "swap" => tokens.push(Instruction::new(Operation::Swap, None)),
+            "over" => tokens.push(Instruction::new(Operation::Over, None)),
+            "rot" => tokens.push(Instruction::new(Operation::Rot, None)),
             "if" => {
                 // Increment block_id to get a unique label name for each label
                 block_id += 1;
@@ -38,17 +51,36 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
                     Operation::If,
                     Some(vec![block_id.to_string()]),
                 ));
-                block_stack.push(block_id);
+                block_stack.push((block_id, Operation::If));
+            }
+            "while" => {
+                block_id += 1;
+                tokens.push(Instruction::new(
+                    Operation::While,
+                    Some(vec![block_id.to_string()]),
+                ));
+                block_stack.push((block_id, Operation::While));
+            }
+            "do" => {
+                let id = match block_stack.last() {
+                    Some(_) => {
+                        block_id += 1;
+                        block_id
+                    }
+                    None => {
+                        error_println!("'do' statement without matching while statement");
+                        return Err(());
+                    }
+                };
+                tokens.push(Instruction::new(Operation::Do, Some(vec![id.to_string()])));
             }
             "else" => {
-                let id = match block_stack.last() {
-                    Some(t) => {
-                        // Clone the block_id
-                        let ret = t.clone();
+                let id = match block_stack.pop() {
+                    Some(tmp_id) => {
                         // Increment block_id for label pointing to end of if-else block & replace the id at the top of the block_stack with it
                         block_id += 1;
-                        replace(block_stack.last_mut().unwrap(), block_id);
-                        ret
+                        block_stack.push((block_id, Operation::If));
+                        tmp_id
                     }
                     None => {
                         error_println!("Homeless 'else'");
@@ -58,18 +90,27 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
                 // Push the label pointing to the end of the block & the label name for label that points to the else code
                 tokens.push(Instruction::new(
                     Operation::Else,
-                    Some(vec![block_id.to_string(), id.to_string()]),
+                    Some(vec![block_id.to_string(), id.0.to_string()]),
                 ));
             }
             "end" => {
-                let id = match block_stack.pop() {
+                let (id, operation) = match block_stack.pop() {
                     Some(t) => t,
                     None => {
                         error_println!("Homeless 'end'");
                         return Err(());
                     }
                 };
-                tokens.push(Instruction::new(Operation::End, Some(vec![id.to_string()])));
+                let operation = match operation {
+                    Operation::If => "if",
+                    Operation::While => "while",
+                    _ => "null",
+                };
+
+                tokens.push(Instruction::new(
+                    Operation::End,
+                    Some(vec![id.to_string(), operation.to_string()]),
+                ));
             }
             _ => {
                 match instr.parse::<u64>() {

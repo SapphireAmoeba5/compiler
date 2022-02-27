@@ -33,255 +33,79 @@ dump:
     ret
 global _start
 _start:
+    ;--push 0--
+    push    0
     ;--push 1--
     push    1
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      jump_addr_1
-    ;--push 4201--
-    push    4201
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--push 1--
-    push    1
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      jump_addr_2
-    ;--push 4202--
-    push    4202
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--else--
-    jmp     jump_addr_3
-jump_addr_2:
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_3:
-    ;--else--
-    jmp     jump_addr_4
+    ;--push 93--
+    push    93
+    ;--while--
 jump_addr_1:
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_4:
+    ;--dupe--
+    push qword[rsp]
     ;--push 0--
     push    0
-    ;--if--
+    ;--greater than--
+    xor     rcx, rcx
     pop     rax
-    test    rax, rax
-    jz      jump_addr_5
-    ;--push 69--
-    push    69
+    pop     rdx
+    cmp     rdx, rax
+    seta    cl
+    push    rcx
+    ;--do--
+    pop rax
+    test rax, rax
+    jz jump_addr_2
+    ;--rot--
+    pop rax
+    pop rdx
+    pop rcx
+    push rdx
+    push rax
+    push rcx
+    ;--rot--
+    pop rax
+    pop rdx
+    pop rcx
+    push rdx
+    push rax
+    push rcx
+    ;--dupe--
+    push qword[rsp]
+    ;--dump--
+    pop     rdi
+    call    dump
+    ;--dupe--
+    push qword[rsp]
+    ;--rot--
+    pop rax
+    pop rdx
+    pop rcx
+    push rdx
+    push rax
+    push rcx
+    ;--add--
+    pop     rax
+    pop     rdx
+    add     rax, rdx
+    push    rax
+    ;--rot--
+    pop rax
+    pop rdx
+    pop rcx
+    push rdx
+    push rax
+    push rcx
     ;--push 1--
     push    1
-    ;--if--
+    ;--sub--
     pop     rax
-    test    rax, rax
-    jz      jump_addr_6
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--else--
-    jmp     jump_addr_7
-jump_addr_6:
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
+    pop     rdx
+    sub     rdx, rax
+    push    rdx
     ;--end--
-jump_addr_7:
-    ;--else--
-    jmp     jump_addr_8
-jump_addr_5:
-    ;--push 4203--
-    push    4203
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_8:
-    ;--push 1--
-    push    1
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      jump_addr_9
-    ;--push 4204--
-    push    4204
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--push 0--
-    push    0
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      jump_addr_10
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--else--
-    jmp     jump_addr_11
-jump_addr_10:
-    ;--push 4205--
-    push    4205
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_11:
-    ;--else--
-    jmp     jump_addr_12
-jump_addr_9:
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_12:
-    ;--push 1--
-    push    1
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      jump_addr_13
-    ;--push 4206--
-    push    4206
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--push 1--
-    push    1
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      jump_addr_14
-    ;--push 4207--
-    push    4207
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--push 1--
-    push    1
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      jump_addr_15
-    ;--push 4208--
-    push    4208
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--else--
-    jmp     jump_addr_16
-jump_addr_15:
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_16:
-    ;--else--
-    jmp     jump_addr_17
-jump_addr_14:
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_17:
-    ;--else--
-    jmp     jump_addr_18
-jump_addr_13:
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_18:
-    ;--push 1--
-    push    1
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      jump_addr_19
-    ;--push 4209--
-    push    4209
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--push 1--
-    push    1
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      jump_addr_20
-    ;--push 42010--
-    push    42010
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--push 0--
-    push    0
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      jump_addr_21
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--else--
-    jmp     jump_addr_22
-jump_addr_21:
-    ;--push 42011--
-    push    42011
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_22:
-    ;--else--
-    jmp     jump_addr_23
-jump_addr_20:
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_23:
-    ;--else--
-    jmp     jump_addr_24
-jump_addr_19:
-    ;--push 69--
-    push    69
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--end--
-jump_addr_24:
+    jmp jump_addr_1
+jump_addr_2:
     ;--exit program--    
     mov rax, 60
     mov rdi, 0

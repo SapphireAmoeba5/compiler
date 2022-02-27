@@ -1,0 +1,16 @@
+2 while dup 0 > do
+    2 while dup 0 > do 
+        2 while dup 0 > do
+            2 while dup 0 > do
+                2 while dup 0 > do
+                    dup .
+                    1 -
+                end
+                pop 1 -
+            end
+            pop 1 -
+        end
+        pop 1 -
+    end
+    pop 1 -
+end

@@ -1,3 +1,5 @@
+use std::iter::Inspect;
+
 use crate::operation::*;
 use crate::{debug_println, error_println, info_println, info_println_if};
 
@@ -59,6 +61,51 @@ pub fn asm_dump(instr: &Instruction) -> String {
     )
 }
 
+pub fn asm_dupe(instr: &Instruction) -> String {
+    format!(
+        "    ;--dupe--
+    push qword[rsp]\n"
+    )
+}
+
+pub fn asm_pop(instr: &Instruction) -> String {
+    format!(
+        "    ;--pop--
+    add rsp, 8\n"
+    )
+}
+
+pub fn asm_swap(instr: &Instruction) -> String {
+    format!(
+        "    ;--swap--
+    pop rax
+    pop rdx
+    push rax
+    push rdx\n"
+    )
+}
+
+pub fn asm_over(instr: &Instruction) -> String {
+    format!(
+        "    ;--over--
+    mov rax, qword[rsp + 8]
+    push rax\n"
+    )
+}
+
+// TODO: Implement this function
+pub fn asm_rot(instr: &Instruction) -> String {
+    format!(
+        "    ;--rot--
+    pop rax
+    pop rdx
+    pop rcx
+    push rdx
+    push rax
+    push rcx\n"
+    )
+}
+
 pub fn asm_add(instr: &Instruction) -> String {
     format!(
         "    ;--add--
@@ -94,6 +141,7 @@ pub fn asm_div(instr: &Instruction) -> String {
         "    ;--div--
     pop     rcx
     pop     rax
+    xor rdx, rdx
     div     rcx
     push    rax\n"
     )
@@ -104,7 +152,8 @@ pub fn asm_mod(instr: &Instruction) -> String {
         "    ;--mod--
     pop     rcx
     pop     rax
-    div     rcx.parse::<u64>().unwrap() + 1
+    xor rdx, rdx
+    div     rcx
     push    rdx\n"
     )
 }
@@ -229,6 +278,24 @@ pub fn asm_if(instr: &Instruction) -> String {
     )
 }
 
+pub fn asm_while(instr: &Instruction) -> String {
+    format!(
+        "    ;--while--
+jump_addr_{}:\n",
+        instr.values.clone().unwrap()[0]
+    )
+}
+
+pub fn asm_do(instr: &Instruction) -> String {
+    format!(
+        "    ;--do--
+    pop rax
+    test rax, rax
+    jz jump_addr_{}\n",
+        instr.values.clone().unwrap()[0]
+    )
+}
+
 pub fn asm_else(instr: &Instruction) -> String {
     format!(
         "    ;--else--
@@ -240,9 +307,25 @@ jump_addr_{}:\n",
 }
 
 pub fn asm_end(instr: &Instruction) -> String {
-    format!(
-        "    ;--end--
+    match instr.values.clone().unwrap()[1].as_str() {
+        "if" => {
+            format!(
+                "    ;--end--
+        jump_addr_{}:\n",
+                instr.values.clone().unwrap()[0]
+            )
+        }
+
+        "while" => {
+            format!(
+                "    ;--end--
+    jmp jump_addr_{}
 jump_addr_{}:\n",
-        instr.values.clone().unwrap()[0]
-    )
+                instr.values.clone().unwrap()[0],
+                instr.values.clone().unwrap()[0].parse::<u64>().unwrap() + 1
+            )
+        }
+
+        _ => String::from("none"),
+    }
 }
