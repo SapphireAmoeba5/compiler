@@ -41,7 +41,7 @@ pub enum Operation {
 #[derive(Debug)]
 pub struct Instruction {
     pub op: Operation,
-    pub values: Vec<String>,
+    pub values: Vec<String>,s
 }
 
 impl Instruction {
