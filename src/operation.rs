@@ -22,6 +22,8 @@ pub enum Operation {
     LessThan,
     LessThanEqual,
     Not,
+    And,
+    Or,
     // Bitwise
     BitwiseNot,
     BitwiseAnd,
@@ -39,11 +41,11 @@ pub enum Operation {
 #[derive(Debug)]
 pub struct Instruction {
     pub op: Operation,
-    pub values: Option<Vec<String>>,
+    pub values: Vec<String>,
 }
 
 impl Instruction {
-    pub fn new(op: Operation, values: Option<Vec<String>>) -> Self {
+    pub fn new(op: Operation, values: Vec<String>) -> Self {
         Self {
             op: op,
             values: values,
