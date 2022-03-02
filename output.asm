@@ -503,7 +503,8 @@ loc32:
 loc33:
     mov rax, 0
 loc34:
-    push rax    ;--if--
+    push rax
+    ;--if--
     pop     rax
     test    rax, rax
     jz      loc35
@@ -539,7 +540,8 @@ loc36:
 loc37:
     mov rax, 0
 loc38:
-    push rax    ;--if--
+    push rax
+    ;--if--
     pop     rax
     test    rax, rax
     jz      loc39
@@ -575,7 +577,8 @@ loc40:
 loc41:
     mov rax, 0
 loc42:
-    push rax    ;--if--
+    push rax
+    ;--if--
     pop     rax
     test    rax, rax
     jz      loc43
@@ -611,7 +614,8 @@ loc44:
 loc45:
     mov rax, 0
 loc46:
-    push rax    ;--if--
+    push rax
+    ;--if--
     pop     rax
     test    rax, rax
     jz      loc47
@@ -647,7 +651,8 @@ loc48:
 loc49:
     mov rax, 0
 loc50:
-    push rax    ;--if--
+    push rax
+    ;--if--
     pop     rax
     test    rax, rax
     jz      loc51

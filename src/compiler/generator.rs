@@ -398,6 +398,16 @@ impl AsmGenerator {
         )
     }
 
+    fn asm_bitwise_xor(&mut self, instr: &Instruction) {
+        self.assembly.push_str(
+            "    ;--bitwise xor--
+        pop     rax
+        pop     rdx
+        xor     rax, rdx
+        push    rax\n",
+        )
+    }
+
     fn asm_not(&mut self, instr: &Instruction) {
         self.assembly.push_str(
             "    ;--not--
