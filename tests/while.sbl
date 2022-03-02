@@ -1,8 +1,7 @@
-2 while dup 0 > do
-    2 while dup 0 > do 
-        over 2 * over + .
+3 while dup 0 > do
+    3 while dup 0 > do 
+        100 .
         1 -
-    end
-    pop
+    end pop
     1 -
 end

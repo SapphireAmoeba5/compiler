@@ -41,14 +41,14 @@ pub enum Operation {
 #[derive(Debug)]
 pub struct Instruction {
     pub op: Operation,
-    pub values: Vec<String>,
+    pub value: String,
 }
 
 impl Instruction {
-    pub fn new(op: Operation, values: Vec<String>) -> Self {
+    pub fn new(op: Operation, value: String) -> Self {
         Self {
             op: op,
-            values: values,
+            value: value,
         }
     }
 }
