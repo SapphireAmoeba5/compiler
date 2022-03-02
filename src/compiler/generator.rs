@@ -231,7 +231,7 @@ impl AsmGenerator {
             "    ;--swap--
     pop rax
     pop rdx
-    push pax
+    push rax
     push rdx\n",
         );
     }
@@ -427,9 +427,9 @@ impl AsmGenerator {
             format!(
                 "    ;--and--
     pop rax
+    pop rdx
     test rax, rax
     jz loc{0}
-    pop rdx
     test rdx, rdx
     mov rax, 1
     jz loc{0}
@@ -451,10 +451,10 @@ loc{1}:
             format!(
                 "    ;--or--
     pop rax
+    pop rdx
     test rax, rax
     mov rax, 1
     jnz loc{1}
-    pop rdx
     test rdx, rdx
     jnz loc{1}
 loc{0}:
@@ -587,7 +587,10 @@ loc{}:\n",
                     .as_str(),
                 )
             }
-            _ => {}
+            _ => {
+                error_println!("Invalid block beginning for end");
+                return;
+            }
         }
     }
 }

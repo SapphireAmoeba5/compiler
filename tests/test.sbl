@@ -1,1 +1,4 @@
-5 5 && if 1 . else 0 . end
+5 while dup 0 > do
+    dup .
+    1 -
+end
