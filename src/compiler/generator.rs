@@ -391,15 +391,7 @@ impl AsmGenerator {
             "    ;--bitwise or--
     pop     rax
     pop     rdx
-    or      rax, rdx
-    push    rax\n",
-        )
-    }
-
-    fn asm_bitwise_xor(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
-            "    ;--bitwise xor--
-    pop     rax
+    or      rax, rdx0
     pop     rdx
     xor     rax, rdx
     push    rax\n",
@@ -418,41 +410,48 @@ impl AsmGenerator {
     }
 
     fn asm_and(&mut self, instr: &Instruction) {
-        let id = self.new_label_id();
+        let id0 = self.new_label_id();
+        let id1 = self.new_label_id();
+
         self.assembly.push_str(
             format!(
                 "    ;--and--
     pop rax
+    test rax, rax
+    jz loc{0}
     pop rdx
-    cmp rax, 0
-    jnz loc{0}
-    cmp rdx, 0
+    test rdx, rdx
+    mov rax, 1
+    jz loc{0}
+    jmp loc{1}
+    push rax
 loc{0}:
-    setz al
-    movzx rax, al
-    push rax\n
-        ",
-                id
+    mov rax, 0
+loc{1}:
+    push rax\n",
+                id0, id1
             )
             .as_str(),
         )
     }
 
     fn asm_or(&mut self, instr: &Instruction) {
-        let id = self.new_label_id();
+        let (id0, id1) = (self.new_label_id(), self.new_label_id());
         self.assembly.push_str(
             format!(
                 "    ;--or--
     pop rax
+    test rax, rax
+    mov rax, 1
+    jnz loc{1}
     pop rdx
-    cmp rax, 0
-    jz loc{0}
-    cmp rdx, 0
+    test rdx, rdx
+    jnz loc{1}
 loc{0}:
-    setz al
-    movzx rax, al
+    mov rax, 0
+loc{1}:
     push rax\n",
-                id
+                id0, id1
             )
             .as_str(),
         )

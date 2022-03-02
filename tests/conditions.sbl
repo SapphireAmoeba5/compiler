@@ -19,3 +19,16 @@
 
 500 if 15 . else 0 . end
 103959438 if 16 . else 0 . end
+
+5 3 && if 17 . else 0 . end
+1 1 && if 18 . else 0 . end
+5 0 && if 0 . else 19 . end
+0 0 && if 0 . else 20 . end
+0 10 && if 0 . else 21 . end
+
+
+5 3 || if 22 . else 0 . end
+1 1 || if 23 . else 0 . end
+5 0 || if 24 . else 0 . end
+0 0 || if 0 . else 25 . end
+0 10 || if 26 . else 0 . end
