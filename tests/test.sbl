@@ -1,3 +1,4 @@
 func print_hello 0 : 2 in
     "Hello\n" puts
-end 
+    1 2
+end
