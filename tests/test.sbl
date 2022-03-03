@@ -1,0 +1,4 @@
+6 dup while dup 0 > do
+    over 2 / over < if "Condition " puts else "Not condition " puts end
+    1 -
+end

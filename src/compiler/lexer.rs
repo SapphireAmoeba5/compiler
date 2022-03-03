@@ -8,9 +8,8 @@ use try_parse::*;
 use std::{fmt::Debug, mem::replace};
 
 pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
-    // TODO: Create own split function that stores the line and column each token occured on
     let words: Vec<Token> = split_tokens(source);
-
+    let mut failed = false;
     let mut tokens: Vec<Instruction> = Vec::new();
 
     for instr in words.iter() {
@@ -42,6 +41,7 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
             "over" => tokens.push(Instruction::new(Operation::Over, String::new())),
             "rot" => tokens.push(Instruction::new(Operation::Rot, String::new())),
             "putc" => tokens.push(Instruction::new(Operation::Putc, String::new())),
+            "puts" => tokens.push(Instruction::new(Operation::Puts, String::new())),
 
             "if" => {
                 tokens.push(Instruction::new(Operation::If, String::new()));
@@ -62,6 +62,7 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
                 match try_parse_number(&instr) {
                     Ok(s) => {
                         tokens.push(Instruction::new(Operation::Push, s));
+                        continue;
                     }
                     Err(_) => {}
                 }
@@ -69,13 +70,24 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
                 match try_parse_string(&instr) {
                     Ok(s) => {
                         tokens.push(Instruction::new(Operation::PushString, s));
+                        continue;
                     }
                     Err(_) => {}
                 }
-                // tokens.push(Instruction::new(Operation::Push, instr.to_string()));
+                failed = true;
+                error_println!(
+                    "{} is an unknown token {}:{}",
+                    instr.token,
+                    instr.line_number,
+                    instr.column
+                );
             }
         }
     }
 
-    Ok(tokens)
+    if !failed {
+        Ok(tokens)
+    } else {
+        Err(())
+    }
 }

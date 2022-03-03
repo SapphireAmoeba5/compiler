@@ -10,6 +10,7 @@ pub enum Operation {
     Over,
     Rot,
     Putc,
+    Puts,
     // Mathematical operations
     Add,
     Sub,

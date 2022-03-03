@@ -47,6 +47,25 @@ impl AsmGenerator {
 
         self.text_section.push_str(
             "section .text
+; !! COMPILER INTRINSIC !!
+strlen:
+    xor rax, rax
+_strlen_loop:
+    cmp byte[rdi + rax], 0
+    jz _strlen_end
+    add rax, 1
+    jmp _strlen_loop
+_strlen_end:
+    ret
+; !! COMPILER INTRINSIC !!
+puts:
+    call strlen
+    mov rdx, rax
+    mov rsi, rdi
+    mov rax, 1
+    mov rdi, 1
+    syscall
+; !! COMPILER INTRINSIC !!
 putc:
     mov byte[rsp - 1], dil
     mov rax, 1
@@ -55,6 +74,7 @@ putc:
     mov rdx, 1
     syscall
     ret
+; !! COMPILER INTRINSIC !!
 dump:
     mov     r9, -3689348814741910323
     sub     rsp, 40
@@ -119,6 +139,9 @@ _start:\n",
                 }
                 Operation::Putc => {
                     self.asm_putc(instr);
+                }
+                Operation::Puts => {
+                    self.asm_puts(instr);
                 }
                 Operation::Add => {
                     self.asm_add(instr);
@@ -241,7 +264,7 @@ impl AsmGenerator {
                 let id = self.next_string_id();
                 self.string_map.insert(instr.value.clone(), id);
                 self.data_section
-                    .push_str(format!("str{} db {}\n", id, instr.value).as_str());
+                    .push_str(format!("str{} db {}, 0\n", id, instr.value).as_str());
                 id
             }
         };
@@ -315,6 +338,14 @@ impl AsmGenerator {
             "    ;--putc--
     pop rdi
     call putc\n",
+        )
+    }
+
+    fn asm_puts(&mut self, instr: &Instruction) {
+        self.text_section.push_str(
+            "    ;--puts--
+    pop rdi
+    call puts\n",
         )
     }
 

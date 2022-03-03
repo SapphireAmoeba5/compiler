@@ -54,7 +54,9 @@ pub fn split_tokens(source: &str) -> Vec<Token> {
 fn push_word(tokens: &mut Vec<Token>, word: &str, line_number: usize, column: usize) {
     let word = word.trim();
     if !word.is_empty() {
-        let begin_column = column - word.len();
+        // TODO: Fix panic that occurs here due to overflow
+        // let begin_column = column - word.len() - 1;
+        let begin_column = 0;
         tokens.push(Token::new(word, line_number, begin_column));
     }
 }
