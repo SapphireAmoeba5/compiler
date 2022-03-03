@@ -39,7 +39,9 @@ pub fn split_tokens(source: &str) -> Vec<Token> {
 
         if ch == '\n' {
             line_number += 1;
-            column = 1;
+            if !in_string {
+                column = 1;
+            }
         }
 
         escaped = ch == '\\' && in_string && !escaped

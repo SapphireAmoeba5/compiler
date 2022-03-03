@@ -266,7 +266,7 @@ impl AsmGenerator {
         let mut parsed_string = String::new();
         let mut escaped = false;
         for ch in str.chars() {
-            if ch != '\\' && !escaped {
+            if ch != '\n' && ch != '\\' && !escaped {
                 parsed_string.push(ch);
             } else if escaped {
                 let byte = self.char_to_escape_code(ch)?;

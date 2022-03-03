@@ -19,4 +19,11 @@ fn main() {
     let args = Arguments::parse();
 
     let s = Compiler::new(&args.input_file, &args.output_file);
+
+    match s {
+        Ok(_) => {}
+        Err(_) => {
+            error_println!("Compilation failed");
+        }
+    }
 }

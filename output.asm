@@ -1,6 +1,5 @@
 section .data
-str1 db "Hello", 10, "f", 10, "f", 10, "f", 10, "f", 10, "f", 10, "f", 10, "f", 10, "f", 10, "", 0
-str2 db "Hell0", 10, "", 0
+str1 db "Hello, World!Hello World!", 0
 section .text
 ; !! COMPILER INTRINSIC !!
 strlen:
@@ -66,21 +65,6 @@ global _start
 _start:
     ;--push string--
     push str1
-    ;--dupe--
-    push    qword[rsp]
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--puts--
-    pop rdi
-    call puts
-    ;--push string--
-    push str2
-    ;--dupe--
-    push    qword[rsp]
-    ;--dump--
-    pop     rdi
-    call    dump
     ;--puts--
     pop rdi
     call puts
