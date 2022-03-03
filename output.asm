@@ -1,4 +1,13 @@
+section .data
 section .text
+putc:
+    mov byte[rsp - 1], dil
+    mov rax, 1
+    mov rdi, 1
+    lea rsi, [rsp - 1]
+    mov rdx, 1
+    syscall
+    ret
 dump:
     mov     r9, -3689348814741910323
     sub     rsp, 40
@@ -33,6 +42,71 @@ dump:
     ret
 global _start
 _start:
+    ;--push 72--
+    push    72
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 101--
+    push    101
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 108--
+    push    108
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 108--
+    push    108
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 111--
+    push    111
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 44--
+    push    44
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 32--
+    push    32
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 87--
+    push    87
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 111--
+    push    111
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 114--
+    push    114
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 108--
+    push    108
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 100--
+    push    100
+    ;--putc--
+    pop rdi
+    call putc
+    ;--push 10--
+    push    10
+    ;--putc--
+    pop rdi
+    call putc
     ;--exit program--    
     mov rax, 60
     mov rdi, 0

@@ -1,108 +1,11 @@
 mod split;
+mod try_parse;
 
 use crate::{debug_println, error_println, info_println, operation::*, warn_println};
 use split::*;
+use try_parse::*;
 
 use std::{fmt::Debug, mem::replace};
-
-fn try_parse_number(word: &Token) -> Result<String, ()> {
-    let number = word.token.as_str();
-
-    match number.parse::<u64>() {
-        Ok(_) => {
-            return Ok(number.to_string());
-        }
-        Err(_) => {}
-    }
-
-    match number.parse::<i64>() {
-        Ok(_) => {
-            warn_println!(
-                "This language currently doesn't support signed values {}:{}",
-                word.line_number,
-                word.column
-            );
-            return Ok(number.to_string());
-        }
-        Err(_) => {}
-    }
-
-    match &number[..2] {
-        "0x" => {
-            if number.len() - 2 > 16 {
-                error_println!(
-                    "Hexadecimal literal too large {}:{}",
-                    word.line_number,
-                    word.column
-                );
-                return Err(());
-            }
-
-            match u64::from_str_radix(&number[2..], 16) {
-                Ok(s) => {
-                    return Ok(s.to_string());
-                }
-                Err(_) => {
-                    error_println!(
-                        "Invalid hexadecimal literal {}:{}",
-                        word.line_number,
-                        word.column
-                    );
-                    return Err(());
-                }
-            }
-        }
-        "0b" => {
-            if number.len() - 2 > 64 {
-                error_println!(
-                    "Binary literal too large {}:{}",
-                    word.line_number,
-                    word.column
-                );
-                return Err(());
-            }
-
-            match u64::from_str_radix(&number[2..], 2) {
-                Ok(s) => {
-                    return Ok(s.to_string());
-                }
-                Err(_) => {
-                    error_println!(
-                        "Invalid binary literal {}:{}",
-                        word.line_number,
-                        word.column
-                    );
-                    return Err(());
-                }
-            }
-        }
-
-        _ => {}
-    }
-
-    Err(())
-}
-
-fn try_parse_string(word: &Token) -> Result<String, ()> {
-    let string = word.token.as_str();
-
-    if string.starts_with('"') && string.ends_with('"') {
-        let mut escaped = false;
-
-        for (i, ch) in string[1..].chars().enumerate() {
-            if ch == '"' && !escaped {
-                if string[..=i].len() + 1 != string.len() {
-                    return Err(());
-                }
-                return Ok(string.to_string());
-            }
-
-            escaped = ch == '\\'
-        }
-    }
-
-    Err(())
-}
 
 pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
     // TODO: Create own split function that stores the line and column each token occured on
@@ -138,6 +41,8 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
             "swap" => tokens.push(Instruction::new(Operation::Swap, String::new())),
             "over" => tokens.push(Instruction::new(Operation::Over, String::new())),
             "rot" => tokens.push(Instruction::new(Operation::Rot, String::new())),
+            "putc" => tokens.push(Instruction::new(Operation::Putc, String::new())),
+
             "if" => {
                 tokens.push(Instruction::new(Operation::If, String::new()));
             }
@@ -163,7 +68,6 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
 
                 match try_parse_string(&instr) {
                     Ok(s) => {
-                        debug_println!("Parsed string: {}", s);
                         tokens.push(Instruction::new(Operation::PushString, s));
                     }
                     Err(_) => {}

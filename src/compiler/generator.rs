@@ -1,5 +1,7 @@
 use crate::operation::*;
 use crate::{debug_println, error_println, info_println, info_println_if};
+use std::collections::HashMap;
+use std::hash::Hash;
 
 struct Block {
     operation: Operation,
@@ -16,24 +18,43 @@ impl Block {
 }
 
 pub struct AsmGenerator {
-    assembly: String,
+    data_section: String,
+    text_section: String,
 
     label_id: usize,
+    string_id: usize,
+
+    string_map: HashMap<String, usize>,
     block_stack: Vec<Block>,
 }
 
 impl AsmGenerator {
     pub fn new() -> Self {
         Self {
-            assembly: String::new(),
+            data_section: String::new(),
+            text_section: String::new(),
+
             label_id: 0,
+            string_id: 0,
+
+            string_map: HashMap::new(),
             block_stack: Vec::new(),
         }
     }
 
     pub fn compile_tokens(&mut self, tokens: &Vec<Instruction>) -> String {
-        self.assembly.push_str(
+        self.data_section.push_str("section .data\n");
+
+        self.text_section.push_str(
             "section .text
+putc:
+    mov byte[rsp - 1], dil
+    mov rax, 1
+    mov rdi, 1
+    lea rsi, [rsp - 1]
+    mov rdx, 1
+    syscall
+    ret
 dump:
     mov     r9, -3689348814741910323
     sub     rsp, 40
@@ -75,6 +96,9 @@ _start:\n",
                 Operation::Push => {
                     self.asm_push(instr);
                 }
+                Operation::PushString => {
+                    self.asm_push_string(instr);
+                }
                 Operation::Dump => {
                     self.asm_dump(instr);
                 }
@@ -92,6 +116,9 @@ _start:\n",
                 }
                 Operation::Rot => {
                     self.asm_rot(instr);
+                }
+                Operation::Putc => {
+                    self.asm_putc(instr);
                 }
                 Operation::Add => {
                     self.asm_add(instr);
@@ -164,30 +191,39 @@ _start:\n",
         }
 
         // Push code to return from program
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--exit program--    
     mov rax, 60
     mov rdi, 0
     syscall",
         );
 
-        self.assembly.clone()
+        let mut assembly = String::new();
+        assembly.push_str(&self.data_section);
+        assembly.push_str(&self.text_section);
+        assembly
     }
 }
 
 // Private utility
 impl AsmGenerator {
     /// Generates a unique ID for an assembly label
-    fn new_label_id(&mut self) -> usize {
+    fn next_label_id(&mut self) -> usize {
         self.label_id += 1;
         return self.label_id;
+    }
+
+    // Generates a unique ID for a string
+    fn next_string_id(&mut self) -> usize {
+        self.string_id += 1;
+        return self.string_id;
     }
 }
 
 // Assembly generation functions
 impl AsmGenerator {
     fn asm_push(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             format!(
                 "    ;--push {0}--
     push    {0}\n",
@@ -197,8 +233,31 @@ impl AsmGenerator {
         );
     }
 
+    fn asm_push_string(&mut self, instr: &Instruction) {
+        let str_id = match self.string_map.contains_key(&instr.value) {
+            true => self.string_map.get(&instr.value).unwrap().clone(),
+            false => {
+                // TODO: Insert this in it's own function to clean up code
+                let id = self.next_string_id();
+                self.string_map.insert(instr.value.clone(), id);
+                self.data_section
+                    .push_str(format!("str{} db {}\n", id, instr.value).as_str());
+                id
+            }
+        };
+
+        self.text_section.push_str(
+            format!(
+                "    ;--push string--
+    push str{}\n",
+                str_id
+            )
+            .as_str(),
+        )
+    }
+
     fn asm_dump(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             format!(
                 "    ;--dump--
     pop     rdi
@@ -209,21 +268,21 @@ impl AsmGenerator {
     }
 
     fn asm_dupe(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--dupe--
     push    qword[rsp]\n",
         );
     }
 
     fn asm_pop(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--pop--
     add rsp, 8\n",
         );
     }
 
     fn asm_swap(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--swap--
     pop rax
     pop rdx
@@ -233,14 +292,14 @@ impl AsmGenerator {
     }
 
     fn asm_over(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--over--
     push qword[rsp + 8]\n",
         );
     }
 
     fn asm_rot(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--rot--
     pop rax
     pop rdx
@@ -251,8 +310,16 @@ impl AsmGenerator {
         );
     }
 
+    fn asm_putc(&mut self, instr: &Instruction) {
+        self.text_section.push_str(
+            "    ;--putc--
+    pop rdi
+    call putc\n",
+        )
+    }
+
     fn asm_add(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--add--
     pop rax
     pop rdx
@@ -262,7 +329,7 @@ impl AsmGenerator {
     }
 
     fn asm_sub(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--sub--
     pop rax
     pop rdx
@@ -272,7 +339,7 @@ impl AsmGenerator {
     }
 
     fn asm_mul(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--mul--
     pop     rax
     pop     rdx
@@ -282,7 +349,7 @@ impl AsmGenerator {
     }
 
     fn asm_div(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--div--
     pop     rcx
     pop     rax
@@ -293,7 +360,7 @@ impl AsmGenerator {
     }
 
     fn asm_mod(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--mod--
     pop     rcx
     pop     rax
@@ -304,7 +371,7 @@ impl AsmGenerator {
     }
 
     fn asm_eq(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--equals--
     pop     rax
     pop     rdx
@@ -316,7 +383,7 @@ impl AsmGenerator {
     }
 
     fn asm_greater_than(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--greater than--
     pop     rax
     pop     rdx
@@ -328,7 +395,7 @@ impl AsmGenerator {
     }
 
     fn asm_greater_than_eq(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--greater than or equal--
     pop     rax
     pop     rdx
@@ -340,7 +407,7 @@ impl AsmGenerator {
     }
 
     fn asm_less_than(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--less than--
     xor     rcx, rcx
     pop     rax
@@ -352,7 +419,7 @@ impl AsmGenerator {
     }
 
     fn asm_less_than_eq(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--less than or equal--
     xor     rcx, rcx
     pop     rax
@@ -364,7 +431,7 @@ impl AsmGenerator {
     }
 
     fn asm_bitwise_not(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--bitwise not--
     pop     rax
     not     rax
@@ -373,7 +440,7 @@ impl AsmGenerator {
     }
 
     fn asm_bitwise_and(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--bitwise and--
     pop     rax
     pop     rdx
@@ -383,7 +450,7 @@ impl AsmGenerator {
     }
 
     fn asm_bitwise_or(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--bitwise or--
     pop     rax
     pop     rdx
@@ -395,7 +462,7 @@ impl AsmGenerator {
     }
 
     fn asm_bitwise_xor(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--bitwise xor--
         pop     rax
         pop     rdx
@@ -405,7 +472,7 @@ impl AsmGenerator {
     }
 
     fn asm_not(&mut self, instr: &Instruction) {
-        self.assembly.push_str(
+        self.text_section.push_str(
             "    ;--not--
     pop     rax
     test    rax, rax
@@ -416,10 +483,10 @@ impl AsmGenerator {
     }
 
     fn asm_and(&mut self, instr: &Instruction) {
-        let id0 = self.new_label_id();
-        let id1 = self.new_label_id();
+        let id0 = self.next_label_id();
+        let id1 = self.next_label_id();
 
-        self.assembly.push_str(
+        self.text_section.push_str(
             format!(
                 "    ;--and--
     pop rax
@@ -442,8 +509,8 @@ loc{1}:
     }
 
     fn asm_or(&mut self, instr: &Instruction) {
-        let (id0, id1) = (self.new_label_id(), self.new_label_id());
-        self.assembly.push_str(
+        let (id0, id1) = (self.next_label_id(), self.next_label_id());
+        self.text_section.push_str(
             format!(
                 "    ;--or--
     pop rax
@@ -464,9 +531,9 @@ loc{1}:
     }
 
     fn asm_if(&mut self, instr: &Instruction) {
-        let id = self.new_label_id();
+        let id = self.next_label_id();
         self.block_stack.push(Block::new(Operation::If, id));
-        self.assembly.push_str(
+        self.text_section.push_str(
             format!(
                 "    ;--if--
     pop     rax
@@ -479,9 +546,9 @@ loc{1}:
     }
 
     fn asm_while(&mut self, instr: &Instruction) {
-        let id = self.new_label_id();
+        let id = self.next_label_id();
         self.block_stack.push(Block::new(Operation::While, id));
-        self.assembly.push_str(
+        self.text_section.push_str(
             format!(
                 "    ;--while--
     loc{}:\n",
@@ -506,9 +573,9 @@ loc{1}:
             }
         }
 
-        let id = self.new_label_id();
+        let id = self.next_label_id();
         self.block_stack.push(Block::new(Operation::Do, id));
-        self.assembly.push_str(
+        self.text_section.push_str(
             format!(
                 "    ;--do--
     pop rax
@@ -536,10 +603,10 @@ loc{1}:
             }
         };
 
-        let id = self.new_label_id();
+        let id = self.next_label_id();
         self.block_stack.push(Block::new(Operation::If, id));
 
-        self.assembly.push_str(
+        self.text_section.push_str(
             format!(
                 "    ;--else--
     jmp     loc{}
@@ -561,7 +628,7 @@ loc{}:\n",
 
         match block.operation {
             Operation::If => {
-                self.assembly.push_str(
+                self.text_section.push_str(
                     format!(
                         "    ;--end if--
 loc{}:\n",
@@ -573,7 +640,7 @@ loc{}:\n",
             Operation::Do => {
                 // while_id is garunteed to be valid because asm_do will validate it
                 let while_id = self.block_stack.pop().unwrap();
-                self.assembly.push_str(
+                self.text_section.push_str(
                     format!(
                         "    ;--end while--
     jmp loc{}
