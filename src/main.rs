@@ -6,10 +6,6 @@ mod operation;
 use clap::Parser;
 
 use compiler::*;
-use interpreter::*;
-
-// TODO: Remove this after debugging
-use operation::*;
 
 #[derive(Parser)]
 struct Arguments {

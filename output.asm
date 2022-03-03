@@ -33,40 +33,6 @@ dump:
     ret
 global _start
 _start:
-    ;--push 5--
-    push    5
-    ;--while--
-    loc1:
-    ;--dupe--
-    push    qword[rsp]
-    ;--push 0--
-    push    0
-    ;--greater than--
-    pop     rax
-    pop     rdx
-    cmp     rdx, rax
-    seta    al
-    movzx   rax, al
-    push    rax
-    ;--do--
-    pop rax
-    test rax, rax
-    jz loc2
-    ;--dupe--
-    push    qword[rsp]
-    ;--dump--
-    pop     rdi
-    call    dump
-    ;--push 1--
-    push    1
-    ;--sub--
-    pop rax
-    pop rdx
-    sub rdx, rax
-    push rdx
-    ;--end while--
-    jmp loc1
-loc2:
     ;--exit program--    
     mov rax, 60
     mov rdi, 0

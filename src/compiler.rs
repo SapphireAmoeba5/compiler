@@ -3,7 +3,6 @@ mod lexer;
 
 use std::fs::File;
 use std::io::Write;
-use std::iter::Inspect;
 use std::time::Instant;
 
 use crate::operation::*;

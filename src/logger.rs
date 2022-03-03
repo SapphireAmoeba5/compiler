@@ -16,6 +16,14 @@ macro_rules! error_println {
 
 /// Wrapper around println
 #[macro_export]
+macro_rules! warn_println {
+    ($($args:expr), *) => {
+        println!("[WARNING] {}", format!($($args), *));
+    }
+}
+
+/// Wrapper around println
+#[macro_export]
 macro_rules! info_println {
     ($($args:expr), *) => {
         println!("[INFO] {}", format!($($args), *));

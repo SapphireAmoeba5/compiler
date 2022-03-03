@@ -2,6 +2,7 @@
 pub enum Operation {
     None,
     Push,
+    PushString,
     Dump,
     Dupe,
     Pop,

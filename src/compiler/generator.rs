@@ -1,6 +1,3 @@
-use std::borrow::Borrow;
-use std::iter::Inspect;
-
 use crate::operation::*;
 use crate::{debug_println, error_println, info_println, info_println_if};
 
@@ -18,7 +15,6 @@ impl Block {
     }
 }
 
-// TODO: Convert functions into methods of Generator struct
 pub struct AsmGenerator {
     assembly: String,
 
