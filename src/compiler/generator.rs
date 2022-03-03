@@ -42,7 +42,7 @@ impl AsmGenerator {
         }
     }
 
-    pub fn compile_tokens(&mut self, tokens: &Vec<Instruction>) -> String {
+    pub fn compile_tokens(&mut self, tokens: &Vec<Instruction>) -> Result<String, ()> {
         self.data_section.push_str("section .data\n");
 
         self.text_section.push_str(
@@ -117,7 +117,7 @@ _start:\n",
                     self.asm_push(instr);
                 }
                 Operation::PushString => {
-                    self.asm_push_string(instr);
+                    self.asm_push_string(instr)?;
                 }
                 Operation::Dump => {
                     self.asm_dump(instr);
@@ -142,6 +142,9 @@ _start:\n",
                 }
                 Operation::Puts => {
                     self.asm_puts(instr);
+                }
+                Operation::Strlen => {
+                    self.asm_strlen(instr);
                 }
                 Operation::Add => {
                     self.asm_add(instr);
@@ -221,10 +224,15 @@ _start:\n",
     syscall",
         );
 
+        if !self.block_stack.is_empty() {
+            error_println!("Missing end statement for block");
+            return Err(());
+        }
+
         let mut assembly = String::new();
         assembly.push_str(&self.data_section);
         assembly.push_str(&self.text_section);
-        assembly
+        Ok(assembly)
     }
 }
 
@@ -236,10 +244,65 @@ impl AsmGenerator {
         return self.label_id;
     }
 
-    // Generates a unique ID for a string
+    /// Generates a unique ID for a string
     fn next_string_id(&mut self) -> usize {
         self.string_id += 1;
         return self.string_id;
+    }
+
+    /// Adds a string to the .data section & convert escape sequences. Returns it's ID
+    fn add_string_to_data(&mut self, str: &str) -> Result<usize, ()> {
+        let id = match self.string_map.contains_key(str) {
+            true => {
+                return Ok(self.string_map.get(str).unwrap().clone());
+            }
+            false => {
+                let i = self.next_string_id();
+                self.string_map.insert(str.to_string(), i);
+                i
+            }
+        };
+
+        let mut parsed_string = String::new();
+        let mut escaped = false;
+        for ch in str.chars() {
+            if ch != '\\' && !escaped {
+                parsed_string.push(ch);
+            } else if escaped {
+                let byte = self.char_to_escape_code(ch)?;
+                parsed_string.push_str(format!("\", {}, \"", byte).as_str());
+            }
+
+            escaped = ch == '\\';
+        }
+
+        parsed_string.push_str(", 0\n");
+
+        self.data_section
+            .push_str(format!("str{} db {}", id, parsed_string).as_str());
+
+        Ok(id)
+    }
+
+    fn char_to_escape_code(&self, ch: char) -> Result<u8, ()> {
+        match ch {
+            '\'' => Ok(0x27),
+            '"' => Ok(0x22),
+            '?' => Ok(0x3f),
+            '\\' => Ok(0x5c),
+            'a' => Ok(0x07),
+            'b' => Ok(0x08),
+            'f' => Ok(0x0c),
+            'n' => Ok(0x0a),
+            'r' => Ok(0x0d),
+            't' => Ok(0x09),
+            'v' => Ok(0x0b),
+            '0' => Ok(0x00),
+            _ => {
+                error_println!("\\{} is not a valid escape character", ch);
+                Err(())
+            }
+        }
     }
 }
 
@@ -256,18 +319,8 @@ impl AsmGenerator {
         );
     }
 
-    fn asm_push_string(&mut self, instr: &Instruction) {
-        let str_id = match self.string_map.contains_key(&instr.value) {
-            true => self.string_map.get(&instr.value).unwrap().clone(),
-            false => {
-                // TODO: Insert this in it's own function to clean up code
-                let id = self.next_string_id();
-                self.string_map.insert(instr.value.clone(), id);
-                self.data_section
-                    .push_str(format!("str{} db {}, 0\n", id, instr.value).as_str());
-                id
-            }
-        };
+    fn asm_push_string(&mut self, instr: &Instruction) -> Result<(), ()> {
+        let str_id = self.add_string_to_data(&instr.value)?;
 
         self.text_section.push_str(
             format!(
@@ -276,7 +329,9 @@ impl AsmGenerator {
                 str_id
             )
             .as_str(),
-        )
+        );
+
+        Ok(())
     }
 
     fn asm_dump(&mut self, instr: &Instruction) {
@@ -346,6 +401,15 @@ impl AsmGenerator {
             "    ;--puts--
     pop rdi
     call puts\n",
+        )
+    }
+
+    fn asm_strlen(&mut self, instr: &Instruction) {
+        self.text_section.push_str(
+            "    ;--strlen--
+        pop rdi
+        call strlen
+        push rax\n",
         )
     }
 

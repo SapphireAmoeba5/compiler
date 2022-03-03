@@ -1,5 +1,4 @@
-use std::os::raw::c_ulong;
-
+use crate::{debug_println, error_println, info_println, info_println_if, warn_println};
 #[derive(Debug)]
 pub struct Token {
     pub token: String,
@@ -29,11 +28,6 @@ pub fn split_tokens(source: &str) -> Vec<Token> {
     for (i, ch) in source.chars().enumerate() {
         let blank = source[offset..i].trim().is_empty();
 
-        if ch == '\n' {
-            line_number += 1;
-            column = 0;
-        }
-
         column += 1;
         if ch.is_whitespace() && !in_string && !blank {
             let word = &source[offset..i];
@@ -43,7 +37,12 @@ pub fn split_tokens(source: &str) -> Vec<Token> {
             in_string = !in_string;
         }
 
-        escaped = ch == '\\' && in_string
+        if ch == '\n' {
+            line_number += 1;
+            column = 1;
+        }
+
+        escaped = ch == '\\' && in_string && !escaped
     }
     // Dump the rest of the buffer
     push_word(&mut tokens, &source[offset..], line_number, column + 1);
@@ -54,9 +53,7 @@ pub fn split_tokens(source: &str) -> Vec<Token> {
 fn push_word(tokens: &mut Vec<Token>, word: &str, line_number: usize, column: usize) {
     let word = word.trim();
     if !word.is_empty() {
-        // TODO: Fix panic that occurs here due to overflow
-        // let begin_column = column - word.len() - 1;
-        let begin_column = 0;
+        let begin_column = column - word.len() - 1;
         tokens.push(Token::new(word, line_number, begin_column));
     }
 }

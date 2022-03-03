@@ -42,6 +42,7 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
             "rot" => tokens.push(Instruction::new(Operation::Rot, String::new())),
             "putc" => tokens.push(Instruction::new(Operation::Putc, String::new())),
             "puts" => tokens.push(Instruction::new(Operation::Puts, String::new())),
+            "strlen" => tokens.push(Instruction::new(Operation::Strlen, String::new())),
 
             "if" => {
                 tokens.push(Instruction::new(Operation::If, String::new()));

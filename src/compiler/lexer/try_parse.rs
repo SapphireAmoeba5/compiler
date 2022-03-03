@@ -14,7 +14,7 @@ pub fn try_parse_number(word: &Token) -> Result<String, ()> {
     match number.parse::<i64>() {
         Ok(_) => {
             warn_println!(
-                "This language currently doesn't support signed values {}:{}",
+                "Signed values may not behave as expected {}:{}",
                 word.line_number,
                 word.column
             );
@@ -54,7 +54,7 @@ pub fn try_parse_string(word: &Token) -> Result<String, ()> {
                 return Ok(string.to_string());
             }
 
-            escaped = ch == '\\'
+            escaped = ch == '\\' && !escaped
         }
     }
 

@@ -1,6 +1,6 @@
 section .data
-str1 db "Condition ", 0
-str2 db "Not condition ", 0
+str1 db "Hello", 10, "f", 10, "f", 10, "f", 10, "f", 10, "f", 10, "f", 10, "f", 10, "f", 10, "", 0
+str2 db "Hell0", 10, "", 0
 section .text
 ; !! COMPILER INTRINSIC !!
 strlen:
@@ -64,75 +64,26 @@ dump:
     ret
 global _start
 _start:
-    ;--push 6--
-    push    6
-    ;--dupe--
-    push    qword[rsp]
-    ;--while--
-    loc1:
-    ;--dupe--
-    push    qword[rsp]
-    ;--push 0--
-    push    0
-    ;--greater than--
-    pop     rax
-    pop     rdx
-    cmp     rdx, rax
-    seta    al
-    movzx   rax, al
-    push    rax
-    ;--do--
-    pop rax
-    test rax, rax
-    jz loc2
-    ;--over--
-    push qword[rsp + 8]
-    ;--push 2--
-    push    2
-    ;--div--
-    pop     rcx
-    pop     rax
-    xor rdx, rdx
-    div     rcx
-    push    rax
-    ;--over--
-    push qword[rsp + 8]
-    ;--less than--
-    xor     rcx, rcx
-    pop     rax
-    pop     rdx
-    cmp     rdx, rax
-    setb    cl
-    push    rcx
-    ;--if--
-    pop     rax
-    test    rax, rax
-    jz      loc3
     ;--push string--
     push str1
+    ;--dupe--
+    push    qword[rsp]
+    ;--dump--
+    pop     rdi
+    call    dump
     ;--puts--
     pop rdi
     call puts
-    ;--else--
-    jmp     loc4
-loc3:
     ;--push string--
     push str2
+    ;--dupe--
+    push    qword[rsp]
+    ;--dump--
+    pop     rdi
+    call    dump
     ;--puts--
     pop rdi
     call puts
-    ;--end if--
-loc4:
-    ;--push 1--
-    push    1
-    ;--sub--
-    pop rax
-    pop rdx
-    sub rdx, rax
-    push rdx
-    ;--end while--
-    jmp loc1
-loc2:
     ;--exit program--    
     mov rax, 60
     mov rdi, 0

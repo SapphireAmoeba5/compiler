@@ -1,4 +1,11 @@
-6 dup while dup 0 > do
-    over 2 / over < if "Condition " puts else "Not condition " puts end
-    1 -
-end
+"Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: 
+Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: 
+Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: 
+Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: 
+Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: v
+Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: 
+Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: 
+Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: vv
+Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: vv
+Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: Hello, World: 
+Hello, World: Hello, World: Hello, World: Hello, World: " puts

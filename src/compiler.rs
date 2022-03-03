@@ -38,7 +38,7 @@ impl Compiler {
             }
         };
 
-        s.output_to_assembly(&lexed);
+        s.output_to_assembly(&lexed)?;
 
         info_println!(
             "Compilation finished! {}s ({}ms)",
@@ -52,18 +52,18 @@ impl Compiler {
 
 impl Compiler {
     /// Converts and outputs tokens into assembly
-    fn output_to_assembly(&mut self, tokens: &Vec<Instruction>) {
+    fn output_to_assembly(&mut self, tokens: &Vec<Instruction>) -> Result<(), ()> {
         // Output generated assembly to file
         let mut out_file = match File::create(&self.output_file) {
             Ok(s) => s,
             Err(e) => {
                 error_println!("Error opening output file :: Error: {}", e);
-                return;
+                return Err(());
             }
         };
 
         let mut generater = AsmGenerator::new();
-        let assembly = generater.compile_tokens(&tokens);
+        let assembly = generater.compile_tokens(&tokens)?;
 
         match out_file.write(assembly.as_bytes()) {
             Ok(_) => {}
@@ -71,5 +71,7 @@ impl Compiler {
                 error_println!("Unknown error writing to output file");
             }
         }
+
+        Ok(())
     }
 }

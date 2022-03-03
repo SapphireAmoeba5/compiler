@@ -11,6 +11,7 @@ pub enum Operation {
     Rot,
     Putc,
     Puts,
+    Strlen,
     // Mathematical operations
     Add,
     Sub,
