@@ -1,4 +1,11 @@
-func print_hello 0 : 2 in
-    "Hello\n" puts
-    1 2
+func function 
+    str count -> 2
+in 
+    str puts
+end
+
+
+func main 
+in
+    "Hello, World!" dup strlen function
 end

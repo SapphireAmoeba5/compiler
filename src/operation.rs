@@ -1,8 +1,11 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Operation {
     None,
+    // Stack pushing
     Push,
     PushString,
+
+    // Compiler instrinsic
     Dump,
     Dupe,
     Pop,
@@ -12,6 +15,7 @@ pub enum Operation {
     Putc,
     Puts,
     Strlen,
+
     // Mathematical operations
     Add,
     Sub,
@@ -28,6 +32,7 @@ pub enum Operation {
     Not,
     And,
     Or,
+
     // Bitwise
     BitwiseNot,
     BitwiseAnd,
@@ -40,6 +45,12 @@ pub enum Operation {
     While,
     Do,
     End,
+
+    // Others
+    Identifier,
+    Func,
+    Arrow,
+    In,
 }
 
 #[derive(Debug)]

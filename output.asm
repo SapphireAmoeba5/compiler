@@ -1,5 +1,5 @@
 section .data
-str1 db "Hello, World!Hello World!", 0
+str1 db "Hello", 0
 section .text
 ; !! COMPILER INTRINSIC !!
 strlen:
@@ -63,11 +63,18 @@ dump:
     ret
 global _start
 _start:
-    ;--push string--
-    push str1
+    ;--push 1--
+    push    1
     ;--puts--
     pop rdi
     call puts
+    ;--push 1--
+    push    1
+    ;--push string--
+    push str1
+    ;--dump--
+    pop     rdi
+    call    dump
     ;--exit program--    
     mov rax, 60
     mov rdi, 0

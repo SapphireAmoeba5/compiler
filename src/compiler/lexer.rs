@@ -44,6 +44,10 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
             "puts" => tokens.push(Instruction::new(Operation::Puts, String::new())),
             "strlen" => tokens.push(Instruction::new(Operation::Strlen, String::new())),
 
+            "func" => tokens.push(Instruction::new(Operation::Func, String::new())),
+            "->" => tokens.push(Instruction::new(Operation::Arrow, String::new())),
+            "in" => tokens.push(Instruction::new(Operation::In, String::new())),
+
             "if" => {
                 tokens.push(Instruction::new(Operation::If, String::new()));
             }
@@ -75,7 +79,17 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
                     }
                     Err(_) => {}
                 }
+
+                match try_parse_identifier(&instr) {
+                    Ok(s) => {
+                        tokens.push(Instruction::new(Operation::Identifier, s));
+                        continue;
+                    }
+                    Err(_) => {}
+                }
+
                 failed = true;
+
                 error_println!(
                     "{} is an unknown token {}:{}",
                     instr.token,

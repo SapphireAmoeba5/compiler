@@ -61,6 +61,11 @@ pub fn try_parse_string(word: &Token) -> Result<String, ()> {
     Err(())
 }
 
+pub fn try_parse_identifier(word: &Token) -> Result<String, ()> {
+    // Always return Ok for now
+    Ok(word.token.to_string())
+}
+
 fn try_parse_hex(word: &Token) -> Result<String, ()> {
     if word.token.len() < 2 || !word.token.starts_with("0x") {
         return Err(());

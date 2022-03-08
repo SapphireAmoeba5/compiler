@@ -1,0 +1,6 @@
+func print str -> 1 in 
+    str puts
+    1
+end
+
+"Hello" print .

@@ -110,8 +110,8 @@ dump:
 global _start
 _start:\n",
         );
-
-        for instr in tokens.iter() {
+        let mut token_iter = tokens.iter();
+        while let Some(instr) = token_iter.next() {
             match instr.op {
                 Operation::Push => {
                     self.asm_push(instr);
@@ -204,13 +204,25 @@ _start:\n",
                     self.asm_while(instr);
                 }
                 Operation::Do => {
-                    self.asm_do(instr);
+                    self.asm_do(instr)?;
                 }
                 Operation::Else => {
-                    self.asm_else(instr);
+                    self.asm_else(instr)?;
                 }
                 Operation::End => {
                     self.asm_end(instr);
+                }
+                Operation::Func => {
+                    debug_println!("Function!");
+                }
+                Operation::Arrow => {
+                    debug_println!("Arrow!");
+                }
+                Operation::In => {
+                    debug_println!("In!");
+                }
+                Operation::Identifier => {
+                    debug_println!("Identifier! {}", instr.value);
                 }
                 _ => {}
             }
@@ -266,14 +278,17 @@ impl AsmGenerator {
         let mut parsed_string = String::new();
         let mut escaped = false;
         for ch in str.chars() {
-            if ch != '\n' && ch != '\\' && !escaped {
-                parsed_string.push(ch);
-            } else if escaped {
+            if escaped {
                 let byte = self.char_to_escape_code(ch)?;
                 parsed_string.push_str(format!("\", {}, \"", byte).as_str());
+                escaped = false;
+            } else if ch == '\\' {
+                escaped = true;
             }
-
-            escaped = ch == '\\';
+            // Don't push '\n' characters to allow the programmer to format strings over multiple lines
+            else if ch != '\n' && ch != '\\' && !escaped {
+                parsed_string.push(ch);
+            }
         }
 
         parsed_string.push_str(", 0\n");
@@ -549,9 +564,7 @@ impl AsmGenerator {
             "    ;--bitwise or--
     pop     rax
     pop     rdx
-    or      rax, rdx0
-    pop     rdx
-    xor     rax, rdx
+    or      rax, rdx
     push    rax\n",
         )
     }
@@ -653,18 +666,17 @@ loc{1}:
         )
     }
 
-    fn asm_do(&mut self, instr: &Instruction) {
-        // TODO: Have this function return an error if there is an error
+    fn asm_do(&mut self, instr: &Instruction) -> Result<(), ()> {
         match self.block_stack.last() {
             Some(b) => {
                 if b.operation != Operation::While {
                     error_println!("Do statement without matching while statement");
-                    return;
+                    return Err(());
                 }
             }
             None => {
                 error_println!("Do statement without matching while statement");
-                return;
+                return Err(());
             }
         }
 
@@ -679,22 +691,23 @@ loc{1}:
                 id
             )
             .as_str(),
-        )
+        );
+
+        Ok(())
     }
 
-    fn asm_else(&mut self, instr: &Instruction) {
-        // TODO: Have this function return an error if there is an error
+    fn asm_else(&mut self, instr: &Instruction) -> Result<(), ()> {
         let block = match self.block_stack.pop() {
             Some(b) => {
                 if b.operation != Operation::If {
                     error_println!("Else statement without matching if statement");
-                    return;
+                    return Err(());
                 }
                 b
             }
             None => {
                 error_println!("Else statement without matching if statement");
-                return;
+                return Err(());
             }
         };
 
@@ -709,7 +722,9 @@ loc{}:\n",
                 id, block.block_id
             )
             .as_str(),
-        )
+        );
+
+        Ok(())
     }
 
     fn asm_end(&mut self, instr: &Instruction) {
@@ -750,5 +765,10 @@ loc{}:\n",
                 return;
             }
         }
+    }
+
+    // TODO: FINISH
+    fn asm_func(instr: &Instruction) -> Result<(), ()> {
+        Ok(())
     }
 }
