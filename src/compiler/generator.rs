@@ -709,7 +709,7 @@ loc{1}:
         self.push_asm(
             format!(
                 "    ;--while--
-    loc{}:\n",
+loc{}:\n",
                 id
             )
             .as_str(),
@@ -938,7 +938,7 @@ loc{}:\n",
         self.push_asm(
             "    mov rsp, rbp
     ret\n",
-        );
+        )?;
 
         self.identifiers.pop();
         self.current_function.clear();
@@ -988,7 +988,7 @@ loc{}:\n",
             .as_str(),
         )?;
 
-        for i in 0..func_handle.return_count {
+        for _ in 0..func_handle.return_count {
             /* 24 is a constant because the return values of a function is always at least 24 bytes
             away from RSP at this current point */
             let off = 24 + rsp_offset;

@@ -13,9 +13,9 @@ end
 func print
     num
 in
-    num 10 % 48 +
+    num 10 % '0' +
     1 num 10 / while dup 0 > do
-        dup 10 % 48 +
+        dup 10 % '0' +
         rot rot
         swap 1 + swap
         10 /
@@ -28,5 +28,5 @@ in
 end
 
 func main in 
-    0xffffffff print
+    123 print
 end

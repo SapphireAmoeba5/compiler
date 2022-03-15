@@ -1,6 +1,50 @@
-func print str -> 1 in 
-    str puts
-    1
+func print 
+    num
+in
+    num 10 % '0' +
+    1 num 10 / while dup 0 > do 
+        dup 10 % '0' +
+        rot rot 
+        swap 1 + swap
+        10 /
+    end pop
+
+    while dup 0 > do
+        swap putc
+        1 -
+    end
 end
 
-"Hello" print .
+func println 
+    num
+in
+    num 10 % '0' +
+    1 num 10 / while dup 0 > do 
+        dup 10 % '0' +
+        rot rot 
+        swap 1 + swap
+        10 /
+    end pop
+
+    while dup 0 > do
+        swap putc
+        1 -
+    end
+    '\n' putc
+end
+
+func char_to_int
+    char -> 1
+in
+    char '0' >=
+    char '9' <= &&
+    if
+        char 48 -
+    else
+        0xffffffffffffffff
+    end
+end
+
+func main in 
+    . . . . .
+end

@@ -33,7 +33,7 @@ pub fn split_tokens(source: &str) -> Vec<Token> {
             let word = &source[offset..i];
             push_word(&mut tokens, word, line_number, column);
             offset = i;
-        } else if ch == '"' && !escaped {
+        } else if !escaped && ch == '\'' || ch == '"' {
             in_string = !in_string;
         }
 

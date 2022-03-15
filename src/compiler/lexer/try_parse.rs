@@ -61,6 +61,47 @@ pub fn try_parse_string(word: &Token) -> Result<String, ()> {
     Err(())
 }
 
+pub fn try_parse_char(word: &Token) -> Result<u64, ()> {
+    let tok = word.token.as_str();
+
+    if !tok.starts_with('\'') && !tok.ends_with('\'') || tok.len() > 4 || tok.len() <= 2 {
+        return Err(());
+    }
+
+    if tok.len() == 4 && tok.as_bytes()[1] as char != '\\' {
+        return Err(());
+    }
+
+    // Char is escaped
+    if tok.len() == 4 {
+        let ch = char_to_escape_code(tok.as_bytes()[2] as char)?;
+        return Ok(ch as u64);
+    }
+
+    Ok(tok.as_bytes()[1] as u64)
+}
+
+fn char_to_escape_code(ch: char) -> Result<u8, ()> {
+    match ch {
+        '\'' => Ok(0x27),
+        '"' => Ok(0x22),
+        '?' => Ok(0x3f),
+        '\\' => Ok(0x5c),
+        'a' => Ok(0x07),
+        'b' => Ok(0x08),
+        'f' => Ok(0x0c),
+        'n' => Ok(0x0a),
+        'r' => Ok(0x0d),
+        't' => Ok(0x09),
+        'v' => Ok(0x0b),
+        '0' => Ok(0x00),
+        _ => {
+            error_println!("\\{} is not a valid escape character", ch);
+            Err(())
+        }
+    }
+}
+
 pub fn try_parse_identifier(word: &Token) -> Result<String, ()> {
     // Always return Ok for now
     Ok(word.token.to_string())

@@ -80,6 +80,14 @@ pub fn lex_source(source: &str) -> Result<Vec<Instruction>, ()> {
                     Err(_) => {}
                 }
 
+                match try_parse_char(&instr) {
+                    Ok(s) => {
+                        tokens.push(Instruction::new(Operation::Push, s.to_string()));
+                        continue;
+                    }
+                    Err(_) => {}
+                }
+
                 match try_parse_identifier(&instr) {
                     Ok(s) => {
                         tokens.push(Instruction::new(Operation::Identifier, s));
