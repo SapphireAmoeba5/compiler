@@ -9,22 +9,24 @@ in
     swap
 end
 
-func print 
-    num 
-in
-    num reverse_digits 
-    while dup 0 > do
-        dup 10 % 48 + putc
-        10 /
-    end
-end 
 
-func better_print
+func print
     num
 in
+    num 10 % 48 +
+    1 num 10 / while dup 0 > do
+        dup 10 % 48 +
+        rot rot
+        swap 1 + swap
+        10 /
+    end pop
     
+    while dup 0 > do
+        swap putc
+        1 -
+    end
 end
 
 func main in 
-    5678 print
+    0xffffffff print
 end

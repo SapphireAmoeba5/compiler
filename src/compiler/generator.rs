@@ -379,7 +379,8 @@ impl AsmGenerator {
         self.push_asm(
             format!(
                 "    ;--push {0}--
-    push    {0}\n",
+    mov     rax, {}
+    push    rax\n",
                 instr.value
             )
             .as_str(),
@@ -800,7 +801,7 @@ loc{}:\n",
         Ok(())
     }
 
-    /// Consumes all tokens up to the next 'in' token. Returns Err if it ecounters an invalid token before the next 'in'
+    /// Consumes all tokens up to and including the next 'in' token. Returns Err if it ecounters an invalid token before the next 'in' token
     fn asm_func(&mut self, instr: &Instruction, iter: &mut Iter<Instruction>) -> Result<(), ()> {
         let func_name = match iter.next() {
             Some(s) => {
