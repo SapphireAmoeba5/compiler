@@ -1,11 +1,30 @@
-func function 
-    str count -> 2
-in 
-    str puts
+func reverse_digits
+    dig -> 1
+in
+    0 dig while dup 0 > do
+        swap 10 *
+        over 10 % +
+        swap 10 /
+    end
+    swap
 end
 
-
-func main 
+func print 
+    num 
 in
-    "Hello, World!" dup strlen function
+    num reverse_digits 
+    while dup 0 > do
+        dup 10 % 48 + putc
+        10 /
+    end
+end 
+
+func better_print
+    num
+in
+    
+end
+
+func main in 
+    5678 print
 end

@@ -1,5 +1,4 @@
 section .data
-str1 db "Hello", 0
 section .text
 ; !! COMPILER INTRINSIC !!
 strlen:
@@ -63,19 +62,79 @@ dump:
     ret
 global _start
 _start:
-    ;--push 1--
-    push    1
-    ;--puts--
-    pop rdi
-    call puts
-    ;--push 1--
-    push    1
-    ;--push string--
-    push str1
-    ;--dump--
-    pop     rdi
-    call    dump
+    call main
     ;--exit program--    
     mov rax, 60
     mov rdi, 0
     syscall
+    ;--function--
+main:
+    mov rbp, rsp
+    ;--push 3--
+    push    3
+    ;--while--
+    loc1:
+    ;--dupe--
+    push    qword[rsp]
+    ;--push 0--
+    push    0
+    ;--greater than--
+    pop     rax
+    pop     rdx
+    cmp     rdx, rax
+    seta    al
+    movzx   rax, al
+    push    rax
+    ;--do--
+    pop rax
+    test rax, rax
+    jz loc2
+    ;--push 3--
+    push    3
+    ;--while--
+    loc3:
+    ;--dupe--
+    push    qword[rsp]
+    ;--push 0--
+    push    0
+    ;--greater than--
+    pop     rax
+    pop     rdx
+    cmp     rdx, rax
+    seta    al
+    movzx   rax, al
+    push    rax
+    ;--do--
+    pop rax
+    test rax, rax
+    jz loc4
+    ;--push 100--
+    push    100
+    ;--dump--
+    pop     rdi
+    call    dump
+    ;--push 1--
+    push    1
+    ;--sub--
+    pop rax
+    pop rdx
+    sub rdx, rax
+    push rdx
+    ;--end while--
+jmp loc3
+loc4:
+    ;--pop--
+    add rsp, 8
+    ;--push 1--
+    push    1
+    ;--sub--
+    pop rax
+    pop rdx
+    sub rdx, rax
+    push rdx
+    ;--end while--
+jmp loc1
+loc2:
+    ;--end function--
+    mov rsp, rbp
+    ret

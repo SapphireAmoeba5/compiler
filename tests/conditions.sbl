@@ -1,38 +1,40 @@
-0
+func main in
+    0
 
-10 10 = if 1 + else 0 . end
-10 11 = if 0 . else 1 + end
+    10 10 = if 1 + else 0 . end
+    10 11 = if 0 . else 1 + end
 
-10 10 > if 0 . else 1 + end
-11 10 > if 1 + else 0 . end
-9 10 > if 0 . else 1 + end
+    10 10 > if 0 . else 1 + end
+    11 10 > if 1 + else 0 . end
+    9 10 > if 0 . else 1 + end
 
-10 10 >= if 1 + else 0 . end
-11 10 >= if 1 + else 0 . end
-9 10 >= if 0 . else 1 + end
+    10 10 >= if 1 + else 0 . end
+    11 10 >= if 1 + else 0 . end
+    9 10 >= if 0 . else 1 + end
 
-10 10 < if 0 . else 1 + end
-9 10 < if 1 + else 0 . end
-11 10 < if 0 . else 1 + end
+    10 10 < if 0 . else 1 + end
+    9 10 < if 1 + else 0 . end
+    11 10 < if 0 . else 1 + end
 
-10 ! if 0 . else 1 + end
-0 ! if 1 + else 1 + end
-1 ! if 0 . else 1 + end
+    10 ! if 0 . else 1 + end
+    0 ! if 1 + else 1 + end
+    1 ! if 0 . else 1 + end
 
-500 if 1 + else 0 . end
-103959438 if 1 + else 0 . end
+    500 if 1 + else 0 . end
+    103959438 if 1 + else 0 . end
 
-5 3 && if 1 + else 0 . end
-1 1 && if 1 + else 0 . end
-5 0 && if 0 . else 1 + end
-0 0 && if 0 . else 1 + end
-0 10 && if 0 . else 1 + end
+    5 3 && if 1 + else 0 . end
+    1 1 && if 1 + else 0 . end
+    5 0 && if 0 . else 1 + end
+    0 0 && if 0 . else 1 + end
+    0 10 && if 0 . else 1 + end
 
 
-5 3 || if 1 + else 0 . end
-1 1 || if 1 + else 0 . end
-5 0 || if 1 + else 0 . end
-0 0 || if 0 . else 1 + end
-0 10 || if 1 + else 0 . end
+    5 3 || if 1 + else 0 . end
+    1 1 || if 1 + else 0 . end
+    5 0 || if 1 + else 0 . end
+    0 0 || if 0 . else 1 + end
+    0 10 || if 1 + else 0 . end
 
-dup 26 = if 0xa "Everything is good" puts putc else 0xa "Something went wrong" puts putc end
+    dup 26 = if "Everything is good\n" puts else "Something went wrong\n" puts end
+end

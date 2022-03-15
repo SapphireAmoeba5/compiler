@@ -1,12 +1,12 @@
-1 while dup 0xff <= do
-    dup 5 % 0 = 
-    over 3 % 0 = && if dup "FizzBuzz " puts .
-    else dup 3 %  0 = if dup "Fizz " puts .
-    else dup 5 %  0 = if dup "Buzz " puts .
-    else dup .
-    end end end
-    
-    
-
-    1 +
+func main in
+    1 while dup 0xff <= do
+        dup 5 % 0 = 
+        over 3 % 0 = && if dup "FizzBuzz " puts .
+        else dup 3 %  0 = if dup "Fizz " puts .
+        else dup 5 %  0 = if dup "Buzz " puts .
+        else dup .
+        end end end
+        
+        1 +
+    end
 end
