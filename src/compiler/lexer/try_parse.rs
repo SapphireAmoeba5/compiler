@@ -12,13 +12,13 @@ pub fn try_parse_number(word: &Token) -> Result<String, ()> {
     }
 
     match number.parse::<i64>() {
-        Ok(_) => {
+        Ok(s) => {
             warn_println!(
                 "Signed values may not behave as expected {}:{}",
                 word.line_number,
                 word.column
             );
-            return Ok(number.to_string());
+            return Ok((s as u64).to_string());
         }
         Err(_) => {}
     }

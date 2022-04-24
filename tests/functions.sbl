@@ -46,5 +46,5 @@ in
 end
 
 func main in 
-    . . . . .
+    'f' .
 end

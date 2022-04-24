@@ -803,6 +803,11 @@ loc{}:\n",
 
     /// Consumes all tokens up to and including the next 'in' token. Returns Err if it ecounters an invalid token before the next 'in' token
     fn asm_func(&mut self, instr: &Instruction, iter: &mut Iter<Instruction>) -> Result<(), ()> {
+        if self.current_function.is_empty() == false {
+            error_println!("Cannot define function inside of function body");
+            return Err(());
+        }
+
         let func_name = match iter.next() {
             Some(s) => {
                 if s.op != Operation::Identifier {
@@ -816,6 +821,14 @@ loc{}:\n",
                 return Err(());
             }
         };
+
+        if let Some(_) = self.functions.get(&func_name) {
+            error_println!(
+                "Function with name '{}' already defined elsewhere!",
+                func_name
+            );
+            return Err(());
+        }
 
         let mut identifiers: Vec<String> = Vec::new();
         let mut leftover: Option<&Instruction> = None;

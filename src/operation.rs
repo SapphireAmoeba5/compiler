@@ -53,17 +53,21 @@ pub enum Operation {
     In,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Instruction {
     pub op: Operation,
     pub value: String,
+    pub column: usize,
+    pub line_number: usize,
 }
 
 impl Instruction {
-    pub fn new(op: Operation, value: String) -> Self {
+    pub fn new(op: Operation, value: String, column: usize, line_number: usize) -> Self {
         Self {
             op: op,
             value: value,
+            column: column,
+            line_number: line_number,
         }
     }
 }

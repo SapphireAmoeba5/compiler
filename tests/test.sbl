@@ -1,32 +1,6 @@
-func reverse_digits
-    dig -> 1
-in
-    0 dig while dup 0 > do
-        swap 10 *
-        over 10 % +
-        swap 10 /
-    end
-    swap
-end
-
-
-func print
-    num
-in
-    num 10 % '0' +
-    1 num 10 / while dup 0 > do
-        dup 10 % '0' +
-        rot rot
-        swap 1 + swap
-        10 /
-    end pop
-    
-    while dup 0 > do
-        swap putc
+0 while 1 do
+    dup 10000 = if "Retard\o" puts dup 1 + else dup 1 + dup . end
+    0xfff while dup 0 > do
         1 -
-    end
-end
-
-func main in 
-    123 print
+    end pop
 end

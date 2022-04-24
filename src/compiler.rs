@@ -1,5 +1,5 @@
 mod generator;
-mod lexer;
+pub mod lexer;
 
 use std::fs::File;
 use std::io::Write;
@@ -62,8 +62,8 @@ impl Compiler {
             }
         };
 
-        let mut generater = AsmGenerator::new();
-        let assembly = generater.compile_tokens(&tokens)?;
+        let mut generator = AsmGenerator::new();
+        let assembly = generator.compile_tokens(&tokens)?;
 
         match out_file.write(assembly.as_bytes()) {
             Ok(_) => {}
