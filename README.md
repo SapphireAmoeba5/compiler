@@ -1,1 +1,1 @@
-A simple compiler and interpreter
+A simple compiler and interpreter.
